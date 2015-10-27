@@ -17,6 +17,7 @@
 @property (weak, nonatomic) IBOutlet UIImageView *errorView;
 @property (weak, nonatomic) IBOutlet UILabel *errorLabel;
 @property (weak, nonatomic) IBOutlet UIImageView *errorIcon;
+@property (nonatomic, strong) UIRefreshControl *refreshControl;
 @property NSArray* movies;
 
 @end
@@ -31,6 +32,7 @@
     [self fetchMovies];
     [JTProgressHUD hide];
     self.title = @"Movies";
+    [self setUpRefreshControl];
 }
 
 - (void)fetchMovies {
@@ -50,6 +52,7 @@
                                                                 NSURLResponse * _Nullable response,
                                                                 NSError * _Nullable error) {
                                                 if (!error) {
+                                                    [self.refreshControl endRefreshing];
                                                     NSError *jsonError = nil;
                                                     NSDictionary *responseDictionary =
                                                     [NSJSONSerialization JSONObjectWithData:data
@@ -65,6 +68,12 @@
                                                 }
                                             }];
     [task resume];
+}
+
+- (void)setUpRefreshControl {
+    self.refreshControl = [[UIRefreshControl alloc] init];
+    [self.refreshControl addTarget:self action:@selector(fetchMovies) forControlEvents:UIControlEventValueChanged];
+    [self.tableView insertSubview:self.refreshControl atIndex:0];
 }
 
 
