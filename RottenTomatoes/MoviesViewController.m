@@ -14,6 +14,9 @@
 
 @interface MoviesViewController () <UITableViewDataSource, UITableViewDelegate>
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
+@property (weak, nonatomic) IBOutlet UIImageView *errorView;
+@property (weak, nonatomic) IBOutlet UILabel *errorLabel;
+@property (weak, nonatomic) IBOutlet UIImageView *errorIcon;
 @property NSArray* movies;
 
 @end
@@ -22,6 +25,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.errorView.hidden = YES;
     self.tableView.dataSource = self;
     [JTProgressHUD show];
     [self fetchMovies];
@@ -55,7 +59,9 @@
                                                     self.movies = responseDictionary[@"movies"];
                                                     [self.tableView reloadData];
                                                 } else {
-                                                    NSLog(@"An error occurred: %@", error.description);
+
+                                                    self.errorLabel.text = @"Network Error";
+                                                    self.errorView.hidden = NO;
                                                 }
                                             }];
     [task resume];
